@@ -15,7 +15,6 @@ class ProcessRedirect
 		ProcessRedirect*	instance;
 	} m_ioctx;
 
-
 	HANDLE m_pipe_out_read;
 	char m_readBuffer[4096];
 	buffer* m_buf;

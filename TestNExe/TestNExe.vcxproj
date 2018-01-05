@@ -131,6 +131,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -168,6 +169,11 @@
     <ProjectReference Include="..\nexe\nexe.vcxproj">
       <Project>{90f82597-905e-453f-a3ae-cbf8388211bd}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="..\nexe\x64\Debug\buffer.obj" />
+    <Object Include="..\nexe\x64\Debug\PipeEx.obj" />
+    <Object Include="..\nexe\x64\Debug\ProcessRedirect.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

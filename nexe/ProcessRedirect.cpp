@@ -113,7 +113,6 @@ BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_
 			&siStartInfo,  // STARTUPINFO pointer 
 			&piProcInfo);   // receives PROCESS_INFORMATION 
 }
-
 BOOL CreatePipeHandles(_Out_ HANDLE* read, _Out_ HANDLE* write)
 {
 	SECURITY_ATTRIBUTES saAttr;

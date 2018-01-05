@@ -7,7 +7,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace TestNExe
 {		
-	TEST_CLASS(UnitTest1)
+	TEST_CLASS(TestProcessRedirect)
 	{
 	public:
 		
@@ -16,9 +16,9 @@ namespace TestNExe
 			static bool ImFinished = false;
 			ProcessRedirect pr;
 			Assert::IsTrue(
-				pr.Start(L"c:\\windows\\system32\\cmd.exe", L"/c dir c:", [](char* buf, size_t size) {
+				pr.Start(L"c:\\windows\\system32\\cmd.exe", L"/c dir c:", "localhost", [](const char* buf, size_t size, LPVOID context) {
 					ImFinished = true;
-				})
+				}, NULL)
 			, L"something wrong to start the exe");
 
 			/*Assert::AreEqual(WAIT_IO_COMPLETION, SleepEx(2000, TRUE));
