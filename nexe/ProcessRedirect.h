@@ -3,9 +3,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
-#include <vector>
+#include "buffer.h"
 
-typedef void(*ProcCompleted)(char* buf, size_t size);
+typedef void(*ProcCompleted)(const char* buf, size_t size, LPVOID context);
 
 
 class ProcessRedirect
@@ -15,13 +15,13 @@ class ProcessRedirect
 		ProcessRedirect*	instance;
 	} m_ioctx;
 
-	std::vector<char> m_buf;
 
 	HANDLE m_pipe_out_read;
-	//HANDLE m_pipe_out_write;
 	char m_readBuffer[4096];
+	buffer* m_buf;
 
 	ProcCompleted m_onProcCompleted;
+	LPVOID m_onCompletedContext;
 
 	friend VOID CALLBACK ReadExFinished(
 		_In_    DWORD        dwErrorCode,
@@ -31,5 +31,10 @@ class ProcessRedirect
 public:
 	ProcessRedirect();
 	~ProcessRedirect();
-	BOOL Start(_In_ LPCWSTR exe, _In_ LPWSTR params, _In_ ProcCompleted onProcCompleted);
+	BOOL Start(
+		_In_	LPCWSTR			exe,
+		_Inout_ LPWSTR			params,
+		_In_	LPCSTR			Hostname,
+		_In_	ProcCompleted	onProcCompleted,
+		_In_	LPVOID			context);
 };

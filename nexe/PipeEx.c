@@ -32,7 +32,7 @@ Revision History:
 //#include <stdio.h>
 #include <strsafe.h>
 
-volatile ULONG PipeSerialNumber;
+volatile ULONG g_PipeSerialNumber;
 
 /*++
 
@@ -110,9 +110,9 @@ CreatePipeEx(
 	WCHAR PipeNameBuffer[50];
     //sprintf_s( PipeNameBuffer, sizeof(PipeNameBuffer),
 	StringCbPrintfW(PipeNameBuffer, sizeof(PipeNameBuffer),
-             L"\\\\.\\Pipe\\RemoteExeAnon.%08x.%08x",
+             L"\\\\.\\Pipe\\nexe.%08x.%08x",
              GetCurrentProcessId(),
-             InterlockedIncrement(&PipeSerialNumber)
+             InterlockedIncrement(&g_PipeSerialNumber)
            );
 
     *lpReadPipe = CreateNamedPipeW(

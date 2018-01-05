@@ -6,20 +6,20 @@ BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_
 
 ProcessRedirect::ProcessRedirect()
 {
-	m_pipe_out_read = NULL;
-	//m_pipe_out_write = NULL;
+	m_pipe_out_read = INVALID_HANDLE_VALUE;
 	m_ioctx.instance = this;
 	m_ioctx.overlapped = { 0 };
+	m_buf = NULL;
 }
 
 ProcessRedirect::~ProcessRedirect()
 {
-	if (m_pipe_out_read != NULL) {
+	if (m_pipe_out_read != INVALID_HANDLE_VALUE) {
 		CloseHandle(m_pipe_out_read);
 	}
-	//if (m_pipe_out_write != NULL) {
-	//	CloseHandle(m_pipe_out_write);
-	//}
+	if (m_buf != NULL) {
+		delete m_buf;
+	}
 }
 VOID CALLBACK ReadExFinished(
 	_In_    DWORD        dwErrorCode,
@@ -27,25 +27,33 @@ VOID CALLBACK ReadExFinished(
 	_Inout_ LPOVERLAPPED lpOverlapped)
 {
 #ifdef _DEBUG
-	printf("ReadExFinished: Err=%d, Bytes=%d\n", dwErrorCode, dwNumberOfBytesTransfered);
+	printf("ReadExFinished callback: Err=%d, Bytes=%d\n", dwErrorCode, dwNumberOfBytesTransfered);
 #endif // DEBUG
 
 	ProcessRedirect* self = ((ProcessRedirect::ioctx*)lpOverlapped)->instance;
+	
+	if (dwNumberOfBytesTransfered > 0) {
+		self->m_buf->append(self->m_readBuffer, dwNumberOfBytesTransfered);
+	}
 
-	BOOL rc = ReadFileEx(
-		self->m_pipe_out_read, self->m_readBuffer, sizeof(self->m_readBuffer),
-		&(self->m_ioctx.overlapped), ReadExFinished);
-
-	DWORD ReadFileExLastErr = GetLastError();
-	printf("ReadFileEx returned. rc=%s, LastErr=%d\n", rc ? "true" : "false", ReadFileExLastErr);
-
-	if (ReadFileExLastErr == ERROR_BROKEN_PIPE) {
-		self->m_onProcCompleted(self->m_buf.data(), self->m_buf.size());
+	if (dwErrorCode == ERROR_BROKEN_PIPE) {
+		self->m_onProcCompleted(self->m_buf->data(), self->m_buf->length(), self->m_onCompletedContext);
+	}
+	else {
+		BOOL rc = ReadFileEx(
+			self->m_pipe_out_read, self->m_readBuffer, sizeof(self->m_readBuffer),
+			&(self->m_ioctx.overlapped), ReadExFinished);
 	}
 }
-BOOL ProcessRedirect::Start(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ ProcCompleted onProcCompleted)
+BOOL ProcessRedirect::Start(
+	_In_	LPCWSTR			exe,
+	_Inout_ LPWSTR			params,
+	_In_	LPCSTR			Hostname, 
+	_In_	ProcCompleted	onProcCompleted, 
+	_In_	LPVOID			context)
 {
 	m_onProcCompleted = onProcCompleted;
+	m_buf = new buffer(Hostname);
 
 	HANDLE pipe_out_write;
 
@@ -58,7 +66,8 @@ BOOL ProcessRedirect::Start(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ ProcCo
 	//
 	// 2017-12-30 Spindler
 	// Importante!
-	//	Close the WRITE side of the pipe here.
+	//	AFTER creating the process and attaching the "pipe_out_write" pipe to it...
+	//	close the handle to the pipe here.
 	//	My guess: the write handle has now ben passed to the CreateProcess()
 	//  We close it right afterwards to get an
 	//	ERROR_BROKEN_PIPE WHEN then process has finished writing to it
@@ -73,11 +82,7 @@ BOOL ProcessRedirect::Start(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ ProcCo
 
 	printf("FIRST called ReadFileEx. rc=%s, LastErr=%d\n", rc ? "true" : "false", GetLastError());
 
-	if (rc == FALSE) {
-		return FALSE;
-	}
-
-	return TRUE;
+	return rc;
 }
 
 BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_write) {

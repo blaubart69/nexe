@@ -119,11 +119,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="buffer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PipeEx.c" />
     <ClCompile Include="ProcessRedirect.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="buffer.h" />
     <ClInclude Include="CreatePipeEx.h" />
     <ClInclude Include="ProcessRedirect.h" />
   </ItemGroup>
