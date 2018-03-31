@@ -30,10 +30,11 @@ int TestProcessRedirect(void) {
 	}
 	return 0;
 }
-int TestNameResolution(void)
+int TestNameResolution(LPWSTR Hostname)
 {
+
 	BOOL ok = StartNameQuery(
-			L"splyfil1"
+			Hostname
 		,	[](in_addr ipv4, in6_addr ipv6, LPVOID context) { }
 		,	NULL);
 	if (!ok) {
@@ -67,7 +68,8 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	TestNameResolution();
+	WCHAR Hostname[] = L"beebunt";
+	TestNameResolution(Hostname);
 
 	WSACleanup();
 

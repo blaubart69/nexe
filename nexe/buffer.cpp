@@ -1,6 +1,6 @@
 #include "buffer.h"
 
-void buffer::append(const char const* textdata, const size_t len)
+void buffer::append(_In_ const char *const textdata, _In_ const size_t len)
 {
 	bool newLineWritten = false;
 
@@ -11,8 +11,9 @@ void buffer::append(const char const* textdata, const size_t len)
 	const char* pos = textdata;
 	for (int i = 0; i < len; i++, pos++) {
 		if (newLineWritten && m_prefixForEachLine != NULL) {
-			m_buf.append(m_prefixForEachLine);
-			m_buf.push_back('\t');
+			m_buf
+				.append(m_prefixForEachLine)
+				.push_back('\t');
 		}
 		m_buf.push_back(*pos);
 		newLineWritten = *pos == '\n';

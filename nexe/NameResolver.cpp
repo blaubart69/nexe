@@ -42,13 +42,22 @@ BOOL StartNameQuery(LPWSTR Hostname, ResolveCompleted onResolved, LPVOID userCon
 	//
 	//
 	//
+
+	AFPROTOCOLS    afproto[2] = { { AF_INET, IPPROTO_UDP },
+								  { AF_INET, IPPROTO_TCP } };
+
 	pWsaQuerySet = &(pmyCtlCtx->wsaqueryset);
 	pWsaQuerySet->dwSize = sizeof(WSAQUERYSET);
 	pWsaQuerySet->lpszServiceInstanceName = Hostname;
 	pWsaQuerySet->lpServiceClassId = &Guid;
-	//pWsaQuerySet->dwNameSpace = NS_ALL;
-	pWsaQuerySet->dwNameSpace = NS_DNS;
+	pWsaQuerySet->dwNumberOfProtocols = 2;
+	pWsaQuerySet->lpafpProtocols = afproto;
+	pWsaQuerySet->dwNameSpace = NS_PNRPNAME;
+	//pWsaQuerySet->dwNameSpace = NS_DNS;
+
+
 	if (WSALookupServiceBegin(pWsaQuerySet, LUP_RETURN_ADDR, &hLookup) != 0) {
+	//if (WSALookupServiceBegin(pWsaQuerySet, LUP_RETURN_BLOB | LUP_RETURN_NAME, &hLookup) != 0) {
 		printf("E-WSALookupServiceBegin: LastErr: %d\n", WSAGetLastError());
 		return FALSE;
 	}

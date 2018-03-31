@@ -79,6 +79,7 @@ using GetLastError.
 
 --*/
 
+_Success_(return)
 BOOL
 APIENTRY
 CreatePipeEx(

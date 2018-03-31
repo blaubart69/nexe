@@ -37,7 +37,8 @@ VOID CALLBACK ReadExFinished(
 	}
 
 	if (dwErrorCode == ERROR_BROKEN_PIPE) {
-		self->m_onProcCompleted(self->m_buf->data(), self->m_buf->length(), self->m_onCompletedContext);
+		auto [data, len] = self->m_buf->data();
+		self->m_onProcCompleted(data, len, self->m_onCompletedContext);
 	}
 	else {
 		BOOL rc = ReadFileEx(
@@ -97,10 +98,10 @@ BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_
 	siStartInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
 	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-	WCHAR expandedExe[1024];
+	WCHAR expandedExe[2048];
 	ExpandEnvironmentStringsW(exe, expandedExe, sizeof(expandedExe) - 1);
 
-	return
+	BOOL rc =
 		CreateProcess(
 			expandedExe,
 			params,     // command line 
@@ -112,6 +113,13 @@ BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_
 			NULL,          // use parent's current directory 
 			&siStartInfo,  // STARTUPINFO pointer 
 			&piProcInfo);   // receives PROCESS_INFORMATION 
+
+	if (rc) {
+		CloseHandle(piProcInfo.hProcess);
+		CloseHandle(piProcInfo.hThread);
+	}
+
+	return rc;
 }
 BOOL CreatePipeHandles(_Out_ HANDLE* read, _Out_ HANDLE* write)
 {
