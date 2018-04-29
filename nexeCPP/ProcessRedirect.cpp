@@ -47,8 +47,7 @@ VOID CALLBACK ReadExFinished(
 	}
 }
 BOOL ProcessRedirect::Start(
-	_In_	LPCWSTR			exe,
-	_Inout_ LPWSTR			params,
+	_Inout_ LPWSTR			commandLine,
 	_In_	LPCSTR			Hostname, 
 	_In_	ProcCompleted	onProcCompleted, 
 	_In_	LPVOID			context)
@@ -61,7 +60,7 @@ BOOL ProcessRedirect::Start(
 	if (!CreatePipeHandles(&m_pipe_out_read, &pipe_out_write)) {
 		return FALSE;
 	}
-	if (!StartProcess(exe, params, pipe_out_write)) {
+	if (!StartProcess(commandLine, pipe_out_write)) {
 		return FALSE;
 	}
 	//
@@ -86,7 +85,7 @@ BOOL ProcessRedirect::Start(
 	return rc;
 }
 
-BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_write) {
+BOOL StartProcess(_Inout_ LPWSTR commandline, _In_ HANDLE pipe_out_write) {
 	PROCESS_INFORMATION piProcInfo;
 	STARTUPINFO siStartInfo;
 
@@ -98,21 +97,21 @@ BOOL StartProcess(_In_ LPCWSTR exe, _Inout_ LPWSTR params, _In_ HANDLE pipe_out_
 	siStartInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
 	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
 
-	WCHAR expandedExe[2048];
-	ExpandEnvironmentStringsW(exe, expandedExe, sizeof(expandedExe) - 1);
+	WCHAR expandedCommandline[2048];
+	ExpandEnvironmentStringsW(commandline, expandedCommandline, sizeof(expandedCommandline) - 1);
 
 	BOOL rc =
-		CreateProcess(
-			expandedExe,
-			params,     // command line 
-			NULL,          // process security attributes 
-			NULL,          // primary thread security attributes 
-			TRUE,          // handles are inherited 
-			0,             // creation flags 
-			NULL,          // use parent's environment 
-			NULL,          // use parent's current directory 
-			&siStartInfo,  // STARTUPINFO pointer 
-			&piProcInfo);   // receives PROCESS_INFORMATION 
+		CreateProcessW(
+			NULL,
+			expandedCommandline,	// command line 
+			NULL,					// process security attributes 
+			NULL,					// primary thread security attributes 
+			TRUE,					// handles are inherited 
+			0,						// creation flags 
+			NULL,					// use parent's environment 
+			NULL,					// use parent's current directory 
+			&siStartInfo,			// STARTUPINFO pointer 
+			&piProcInfo);			// receives PROCESS_INFORMATION 
 
 	if (rc) {
 		CloseHandle(piProcInfo.hProcess);

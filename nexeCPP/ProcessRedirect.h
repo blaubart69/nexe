@@ -7,7 +7,6 @@
 
 typedef void(*ProcCompleted)(const char* buf, size_t size, LPVOID context);
 
-
 class ProcessRedirect
 {
 	struct ioctx {
@@ -19,8 +18,8 @@ class ProcessRedirect
 	char m_readBuffer[4096];
 	buffer* m_buf;
 
-	ProcCompleted m_onProcCompleted;
-	LPVOID m_onCompletedContext;
+	ProcCompleted	m_onProcCompleted;
+	LPVOID			m_onCompletedContext;
 
 	friend VOID CALLBACK ReadExFinished(
 		_In_    DWORD        dwErrorCode,
@@ -31,8 +30,7 @@ public:
 	ProcessRedirect();
 	~ProcessRedirect();
 	BOOL Start(
-		_In_	LPCWSTR			exe,
-		_Inout_ LPWSTR			params,
+		_Inout_ LPWSTR			commandLine,
 		_In_	LPCSTR			Hostname,
 		_In_	ProcCompleted	onProcCompleted,
 		_In_	LPVOID			context);

@@ -166,11 +166,6 @@
     <ClCompile Include="TestRedirect.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nexe\nexe.vcxproj">
-      <Project>{90f82597-905e-453f-a3ae-cbf8388211bd}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Object Include="..\nexe\x64\Debug\buffer.obj" />
     <Object Include="..\nexe\x64\Debug\PipeEx.obj" />
     <Object Include="..\nexe\x64\Debug\ProcessRedirect.obj" />

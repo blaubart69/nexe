@@ -23,6 +23,7 @@
     <ProjectGuid>{90F82597-905E-453F-A3AE-CBF8388211BD}</ProjectGuid>
     <RootNamespace>nexe</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>nexeCPP</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

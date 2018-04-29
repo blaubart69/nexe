@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nexe", "nexe\nexe.vcxproj", "{90F82597-905E-453F-A3AE-CBF8388211BD}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNExe", "TestNExe\TestNExe.vcxproj", "{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nexeCPP", "nexeCPP\nexe.vcxproj", "{90F82597-905E-453F-A3AE-CBF8388211BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,14 +15,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x64.ActiveCfg = Debug|x64
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x64.Build.0 = Debug|x64
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x86.ActiveCfg = Debug|Win32
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x86.Build.0 = Debug|Win32
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x64.ActiveCfg = Release|x64
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x64.Build.0 = Release|x64
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.ActiveCfg = Release|Win32
-		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.Build.0 = Release|Win32
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Debug|x64.ActiveCfg = Debug|x64
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Debug|x64.Build.0 = Debug|x64
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Debug|x86.ActiveCfg = Debug|Win32
@@ -31,6 +23,14 @@ Global
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Release|x64.Build.0 = Release|x64
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Release|x86.ActiveCfg = Release|Win32
 		{AA788BEE-FE50-4E47-A109-4FBB3CC21F90}.Release|x86.Build.0 = Release|Win32
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x64.ActiveCfg = Debug|x64
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x64.Build.0 = Debug|x64
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x86.ActiveCfg = Debug|Win32
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Debug|x86.Build.0 = Debug|Win32
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x64.ActiveCfg = Release|x64
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x64.Build.0 = Release|x64
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.ActiveCfg = Release|Win32
+		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

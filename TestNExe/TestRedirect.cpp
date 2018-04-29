@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 
-#include "..\nexe\ProcessRedirect.h"
+#include "..\nexeCPP\ProcessRedirect.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

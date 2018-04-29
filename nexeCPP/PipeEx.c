@@ -30,7 +30,7 @@ Revision History:
 
 #include <windows.h>
 //#include <stdio.h>
-#include <strsafe.h>
+//#include <strsafe.h>
 
 volatile ULONG g_PipeSerialNumber;
 
@@ -99,10 +99,6 @@ CreatePipeEx(
         SetLastError(ERROR_INVALID_PARAMETER);
         return FALSE;
     }
-
-    //
-    //  Set the default timeout to 120 seconds
-    //
 
     if (nSize == 0) {
         nSize = 4096;
