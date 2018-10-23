@@ -4,56 +4,24 @@
 BOOL CreatePipeHandles(_Out_ HANDLE* read, _Out_ HANDLE* write);
 BOOL StartProcess(_Inout_ LPWSTR commandLine, _In_ HANDLE pipe_out_write);
 
-ProcessRedirect::ProcessRedirect()
-{
-	m_pipe_out_read = INVALID_HANDLE_VALUE;
-	m_ioctx.instance = this;
+typedef struct ioctx {
+	OVERLAPPED	overlapped;
+	char		buffer[4096];
+	LPVOID		userContext;
+} PROC_CTX;
 
-	m_ioctx.overlapped = { 0 };
-	m_buf = NULL;
-}
-
-ProcessRedirect::~ProcessRedirect()
+BOOL ProcRedirectStart(
+	_Inout_ LPWSTR				commandLine,
+	_In_	OnProcStdoutWritten	onWritten,
+	_In_	LPVOID				context)
 {
-	if (m_pipe_out_read != INVALID_HANDLE_VALUE) {
-		CloseHandle(m_pipe_out_read);
-	}
-	if (m_buf != NULL) {
-		delete m_buf;
-	}
-}
-VOID CALLBACK ReadExFinished(
-	_In_    DWORD        dwErrorCode,
-	_In_    DWORD        dwNumberOfBytesTransfered,
-	_Inout_ LPOVERLAPPED lpOverlapped)
-{
-#ifdef _DEBUG
-	printf("ReadExFinished callback: Err=%d, Bytes=%d\n", dwErrorCode, dwNumberOfBytesTransfered);
-#endif // DEBUG
-
-	ProcessRedirect* self = ((ProcessRedirect::ioctx*)lpOverlapped)->instance;
-	
-	if (dwNumberOfBytesTransfered > 0) {
-		self->m_buf->append(self->m_readBuffer, dwNumberOfBytesTransfered);
+	PROC_CTX* myCtx = (PROC_CTX*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(PROC_CTX));
+	if (myCtx == NULL)
+	{
+		return FALSE;
 	}
 
-	if (dwErrorCode == ERROR_BROKEN_PIPE) {
-		auto [data, len] = self->m_buf->data();
-		self->m_onProcCompleted(data, len, self->m_onCompletedContext);
-	}
-	else {
-		BOOL rc = ReadFileEx(
-			self->m_pipe_out_read, self->m_readBuffer, sizeof(self->m_readBuffer),
-			&(self->m_ioctx.overlapped), ReadExFinished);
-	}
-}
-BOOL ProcessRedirect::Start(
-	_Inout_ LPWSTR			commandLine,
-	_In_	LPCSTR			Hostname, 
-	_In_	ProcCompleted	onProcCompleted, 
-	_In_	LPVOID			context)
-{
-	m_onProcCompleted = onProcCompleted;
+	myCtx->userContext = context;
 
 	HANDLE pipe_out_write;
 
@@ -77,38 +45,56 @@ BOOL ProcessRedirect::Start(
 	CloseHandle(pipe_out_write);
 
 	BOOL rc = ReadFileEx(
-		m_pipe_out_read, 
-		m_readBuffer, 
+		m_pipe_out_read,
+		m_readBuffer,
 		sizeof(m_readBuffer),
-		&(this->m_ioctx.overlapped), 
+		&(this->m_ioctx.overlapped),
 		ReadExFinished);
 
 	printf("FIRST called ReadFileEx. rc=%s, LastErr=%d\n", rc ? "true" : "false", GetLastError());
 
-	ERROR_NO_MORE_FILES
-
 	return rc;
+
 }
 
-BOOL StartProcess(_Inout_ LPWSTR commandline, _In_ HANDLE pipe_out_write) {
+VOID CALLBACK ReadExFinished(
+	_In_    DWORD        dwErrorCode,
+	_In_    DWORD        dwNumberOfBytesTransfered,
+	_Inout_ LPOVERLAPPED lpOverlapped)
+{
+	PROC_CTX* procCtx = (PROC_CTX*)lpOverlapped;
+
+	if (dwNumberOfBytesTransfered > 0) {
+		self->m_buf->append(self->m_readBuffer, dwNumberOfBytesTransfered);
+	}
+
+	if (dwErrorCode == ERROR_BROKEN_PIPE) {
+		auto[data, len] = self->m_buf->data();
+		self->m_onProcCompleted(data, len, self->m_onCompletedContext);
+	}
+	else {
+		BOOL rc = ReadFileEx(
+			self->m_pipe_out_read, self->m_readBuffer, sizeof(self->m_readBuffer),
+			&(self->m_ioctx.overlapped), ReadExFinished);
+	}
+}
+
+BOOL StartProcessRedirectOutErrToHandle(_Inout_ LPWSTR commandline, _In_ HANDLE outHandle) {
 	PROCESS_INFORMATION piProcInfo;
 	STARTUPINFO siStartInfo;
 
 	ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
 	ZeroMemory(&siStartInfo, sizeof(STARTUPINFO));
 	siStartInfo.cb = sizeof(STARTUPINFO);
-	siStartInfo.hStdError = pipe_out_write;
-	siStartInfo.hStdOutput = pipe_out_write;
+	siStartInfo.hStdError = outHandle;
+	siStartInfo.hStdOutput = outHandle;
 	siStartInfo.hStdInput = GetStdHandle(STD_INPUT_HANDLE);
 	siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
-
-	WCHAR expandedCommandline[2048];
-	ExpandEnvironmentStringsW(commandline, expandedCommandline, sizeof(expandedCommandline) - 1);
 
 	BOOL rc =
 		CreateProcessW(
 			NULL,
-			expandedCommandline,	// command line 
+			commandline,			// command line 
 			NULL,					// process security attributes 
 			NULL,					// primary thread security attributes 
 			TRUE,					// handles are inherited 
@@ -136,9 +122,9 @@ BOOL CreatePipeHandles(_Out_ HANDLE* read, _Out_ HANDLE* write)
 	saAttr.lpSecurityDescriptor = NULL;
 
 	/*
-	// Create a pipe for the child process's STDOUT. 
+	// Create a pipe for the child process's STDOUT.
 	if (!CreatePipe(read, write, &saAttr, 0)) {
-		return FALSE;
+	return FALSE;
 	}
 	*/
 	if (!CreatePipeEx(read, write, &saAttr, 1024, FILE_FLAG_OVERLAPPED, 0)) {

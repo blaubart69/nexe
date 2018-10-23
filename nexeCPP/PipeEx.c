@@ -32,7 +32,7 @@ Revision History:
 //#include <stdio.h>
 //#include <strsafe.h>
 
-volatile ULONG g_PipeSerialNumber;
+
 
 /*++
 
@@ -78,6 +78,8 @@ FALSE/NULL - The operation failed. Extended error status is available
 using GetLastError.
 
 --*/
+
+volatile ULONG g_PipeSerialNumber;
 
 _Success_(return)
 BOOL

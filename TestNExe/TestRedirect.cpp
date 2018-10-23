@@ -16,7 +16,7 @@ namespace TestNExe
 			static bool ImFinished = false;
 			ProcessRedirect pr;
 			Assert::IsTrue(
-				pr.Start(L"c:\\windows\\system32\\cmd.exe", L"/c dir c:", "localhost", [](const char* buf, size_t size, LPVOID context) {
+				pr.Start(L"c:\\windows\\system32\\cmd.exe /c dir c:", "localhost", [](const char* buf, size_t size, LPVOID context) {
 					ImFinished = true;
 				}, NULL)
 			, L"something wrong to start the exe");

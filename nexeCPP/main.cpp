@@ -13,9 +13,9 @@
 int TestProcessRedirect(void) {
 	ProcessRedirect pr;
 
-	WCHAR params[] = L"/c dir c:\\";
+	WCHAR commandLine[] = L"%comspec% /c dir c:\\";
 	//WCHAR params[] = L"/c";
-	if (!pr.Start(L"%comspec%", params,
+	if (!pr.Start(commandLine,
 		"localhost",
 		[](const char* buf, size_t length, LPVOID context) {
 		printf("CALLBACK! size=%zd\n", length);

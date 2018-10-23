@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestNExe", "TestNExe\TestNE
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nexeCPP", "nexeCPP\nexe.vcxproj", "{90F82597-905E-453F-A3AE-CBF8388211BD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nexeC", "nexeC\nexeC.vcxproj", "{75029F92-2532-4FFD-8567-C9B225762047}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x64.Build.0 = Release|x64
 		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.ActiveCfg = Release|Win32
 		{90F82597-905E-453F-A3AE-CBF8388211BD}.Release|x86.Build.0 = Release|Win32
+		{75029F92-2532-4FFD-8567-C9B225762047}.Debug|x64.ActiveCfg = Debug|x64
+		{75029F92-2532-4FFD-8567-C9B225762047}.Debug|x64.Build.0 = Debug|x64
+		{75029F92-2532-4FFD-8567-C9B225762047}.Debug|x86.ActiveCfg = Debug|Win32
+		{75029F92-2532-4FFD-8567-C9B225762047}.Debug|x86.Build.0 = Debug|Win32
+		{75029F92-2532-4FFD-8567-C9B225762047}.Release|x64.ActiveCfg = Release|x64
+		{75029F92-2532-4FFD-8567-C9B225762047}.Release|x64.Build.0 = Release|x64
+		{75029F92-2532-4FFD-8567-C9B225762047}.Release|x86.ActiveCfg = Release|Win32
+		{75029F92-2532-4FFD-8567-C9B225762047}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
